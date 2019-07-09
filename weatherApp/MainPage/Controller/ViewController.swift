@@ -15,8 +15,20 @@ class ViewController: UIViewController {
     
     let citiesDb = CitiesDatabase()
     
+    @IBOutlet weak var citiesTableView: UITableView! {
+        
+        didSet {
+            
+            citiesTableView.delegate = self
+            citiesTableView.dataSource = self
+            citiesTableView.backgroundColor = UIColor(named: "#2e3131")
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        citiesTableView.register(UINib(nibName: "WeatherTableViewCell", bundle: nil), forCellReuseIdentifier: "WeatherCell")
         
         if !citiesDb.checkTableExist() {
             
@@ -47,7 +59,6 @@ class ViewController: UIViewController {
         Service.sharedInstances.getWeatherData(url: WEATHER_URL, parameters: params, completion: { (info) in
             
             self.citiesDb.addCity(info: info)
-            print(self.citiesDb.getNamesOfCities())
         }) { (error) in
             
             print(error as Any)
@@ -61,5 +72,35 @@ class ViewController: UIViewController {
         cities.enumerated().forEach { citiesDb.deleteCity(with: $0.element) } // delete city info
         cities.enumerated().forEach { requestCityInfo(for: $0.element) } // add city info
     }
+}
+
+extension ViewController : UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        let cities = citiesDb.getNamesOfCities()
+        print(cities)
+        return cities.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherCell") as? WeatherTableViewCell {
+            
+            let cities = citiesDb.getNamesOfCities()
+            let cityWheather = citiesDb.getCityWeather(for: cities[indexPath.row]) // get city info
+            
+            cell.cityLabel.text = cities[indexPath.row]
+            cell.degreeLabel.text = cityWheather?.getCityTemperature()
+            return cell
+        }
+        
+        return UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+    
 }
 
