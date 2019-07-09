@@ -24,7 +24,8 @@ class CityInfo : NSObject {
         
         self.date = date.convertTimeStampToDate()
         self.temperature = info["temp"]["day"].stringValue
-        self.weather = info["weather"]["id"].intValue
+        print(info["weather"])
+        self.weather = info["weather"][0]["id"].intValue
     }
     
     init(row : Row) {
@@ -34,9 +35,9 @@ class CityInfo : NSObject {
         temperature = row["temperature"]
     }
     
-    private func setWeatherIcon(condition: Int) -> String {
+    func setWeatherIcon() -> String {
     
-        switch (condition) {
+        switch (weather!) {
         
         case 0...300 :
         return "tstorm1"
@@ -75,6 +76,49 @@ class CityInfo : NSObject {
         return "dunno"
         }
     
+    }
+    
+    func setWeatherImage() -> String {
+        
+        switch (weather!) {
+            
+        case 0...300 :
+            return "storm"
+            
+        case 301...500 :
+            return "lightrain"
+            
+        case 501...600 :
+            return "shower"
+            
+        case 601...700 :
+            return "snow"
+            
+        case 701...771 :
+            return "fogImg"
+            
+        case 772...799 :
+            return "storm"
+            
+        case 800 :
+            return "sunnyImg"
+            
+        case 801...804 :
+            return "clouds"
+            
+        case 900...903, 905...1000  :
+            return "storm"
+            
+        case 903 :
+            return "snow"
+            
+        case 904 :
+            return "sunny"
+            
+        default :
+            return "dunno"
+        }
+        
     }
     
     func getCityDate() -> String {

@@ -33,10 +33,14 @@ class ViewController: UIViewController {
         if !citiesDb.checkTableExist() {
             
             citiesDb.createTable(with: "cities")
-            requestCityInfo(for: "Kiev")
-            requestCityInfo(for: "Lviv")
+            requestCityInfo(for: "Kiev", completion: nil)
+            requestCityInfo(for: "Lviv") {
+                
+                self.citiesTableView.reloadData()
+            }
         } else {
-            
+//            citiesDb.deleteCity(with: "London")
+//            citiesDb.dropTable(with: "cities")
             updateCitiesInfo()
         }
         // Do any additional setup after loading the view.
@@ -49,28 +53,53 @@ class ViewController: UIViewController {
     
     @IBAction func addCity(_ sender: Any) {
         
-        requestCityInfo(for: "London")
+        let alert = UIAlertController(title: "Add city", message: "Type city to add it", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add", style: .default) { (alertAction) in
+            
+            let textField = alert.textFields![0] as UITextField
+            self.requestCityInfo(for: textField.text!) {
+                self.citiesTableView.reloadData()
+            }
+        }
+        alert.addTextField { (textField) in
+            textField.placeholder = "Enter your name"
+        }
+        alert.addAction(action)
+        self.present(alert, animated: true, completion: nil)
     }
     
-    private func requestCityInfo(for city : String) { // request city info from api
+    private func requestCityInfo(for city : String, completion : (() -> ())?) { // request city info from api
         
         let params : [String : String] = ["q" : city, "appid" : APP_ID, "units" : "metric", "cnt" : "7"]
         
         Service.sharedInstances.getWeatherData(url: WEATHER_URL, parameters: params, completion: { (info) in
             
             self.citiesDb.addCity(info: info)
+            completion?()
         }) { (error) in
             
-            print(error as Any)
         }
     }
     
     private func updateCitiesInfo() {
         
         let cities = citiesDb.getNamesOfCities() // get list of cities
+        let myGroup = DispatchGroup()
         
         cities.enumerated().forEach { citiesDb.deleteCity(with: $0.element) } // delete city info
-        cities.enumerated().forEach { requestCityInfo(for: $0.element) } // add city info
+        
+        for city in cities { // add city info
+            
+            myGroup.enter()
+            requestCityInfo(for: city) {
+                myGroup.leave()
+            }
+        }
+        
+        myGroup.notify(queue: DispatchQueue.main) { // reload table
+            
+            self.citiesTableView.reloadData()
+        }
     }
 }
 
@@ -79,7 +108,6 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         let cities = citiesDb.getNamesOfCities()
-        print(cities)
         return cities.count
     }
     
@@ -92,6 +120,7 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
             
             cell.cityLabel.text = cities[indexPath.row]
             cell.degreeLabel.text = cityWheather?.getCityTemperature()
+            cell.backgroundImage.image = UIImage(named: (cityWheather?.setWeatherImage())!)
             return cell
         }
         

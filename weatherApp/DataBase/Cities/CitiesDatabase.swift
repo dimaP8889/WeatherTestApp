@@ -51,7 +51,7 @@ class CitiesDatabase : Database {
         
         do {
             return try citiesDbQueue.read { db in
-                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities DESC")
+                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities ORDER BY city DESC")
                 
                 return row.map({ (row) -> String in
                     return row["city"]

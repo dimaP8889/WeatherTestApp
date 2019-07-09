@@ -19,10 +19,10 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="60.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ose-ar-lF5">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ose-ar-lF5" userLabel="Main View">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="50.5"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="d0e5e82870545507df6296b3301bc613" translatesAutoresizingMaskIntoConstraints="NO" id="iBq-Dd-Sb3">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sunnyImg" translatesAutoresizingMaskIntoConstraints="NO" id="iBq-Dd-Sb3">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="50.5"/>
                             </imageView>
                             <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W4a-xI-vNY" userLabel="Degree View">
@@ -115,13 +115,15 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
+                <outlet property="backgroundImage" destination="iBq-Dd-Sb3" id="N6l-i2-tlh"/>
                 <outlet property="cityLabel" destination="ESK-8k-ema" id="1TP-e0-9mf"/>
                 <outlet property="degreeLabel" destination="2TF-kp-hEe" id="CeV-Rp-NYV"/>
+                <outlet property="mainView" destination="ose-ar-lF5" id="Esw-7c-SaM"/>
             </connections>
             <point key="canvasLocation" x="47.826086956521742" y="40.513392857142854"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="d0e5e82870545507df6296b3301bc613" width="1224" height="1224"/>
+        <image name="sunnyImg" width="1224" height="1224"/>
     </resources>
 </document>
