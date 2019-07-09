@@ -13,8 +13,8 @@ class ViewController: UIViewController {
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/forecast/daily"
     let APP_ID = "e72ca729af228beabd5d20e3b7749713"
     
-    var cities : [CityInfo]?
-    let citiesDb = CitiesDatabase(with: Bundle.main.path(forResource: "CitiesDatabase", ofType: "sqlite")!)
+    var cities : [ForecastInfo] = []
+    let citiesDb = CitiesDatabase()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,8 +24,10 @@ class ViewController: UIViewController {
             citiesDb.createTable(with: "cities")
             requestCityInfo(for: "Kiev")
             requestCityInfo(for: "Lviv")
+        } else {
+            
+            updateCitiesInfo()
         }
-        updateCitiesInfo()
         // Do any additional setup after loading the view.
     }
 
@@ -45,7 +47,9 @@ class ViewController: UIViewController {
         
         Service.sharedInstances.getWeatherData(url: WEATHER_URL, parameters: params, completion: { (info) in
             
+            print(info.getCityInfo().city)
             self.citiesDb.addCity(info: info)
+            self.cities.append(info)
         }) { (error) in
             
             print(error as Any)
@@ -54,10 +58,14 @@ class ViewController: UIViewController {
     
     func updateCitiesInfo() {
         
-        let cities = citiesDb.getNamesOfCities()
+        let cities = citiesDb.getNamesOfCities(with: "cities")
+
+        print(cities)
         citiesDb.dropTable(with: "cities")
+        citiesDb.createTable(with: "cities")
+        self.cities.removeAll()
         
-        for city in cities {
+        cities.forEach { (city) in
             
             requestCityInfo(for: city)
         }

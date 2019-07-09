@@ -11,46 +11,78 @@ import GRDB
 
 class CitiesDatabase : Database {
     
-    let datesDb = DatesDatabase(with: Bundle.main.path(forResource: "DatesDatabase", ofType: "sqlite")!)
-    
-    override init(with path : String) {
-        
-        super.init(with: path)
-        database = citiesDbPool
-    }
+    private var forecastDb = DatesDatabase()
     
     func addCity(info : ForecastInfo) {
+
+        do {
+            try citiesDbQueue.write { db in
+                
+                try db.execute(sql: "INSERT INTO cities (city) VALUES (?)", arguments: ["\(info.getCityInfo().city)"])
+                forecastDb.createTable(with: info)
+            }
+        } catch {
+            print(error)
+            return
+        }
         
+    }
+    
+    internal func checkTableExist() -> Bool {
+        
+        var exist = true
+        
+        do {
+            exist = try citiesDbQueue.read { db in
+                
+                return try db.tableExists("cities")
+            }
+        } catch {
+            
+            print(error)
+            return false
+        }
+        
+        return exist
+    }
+    
+    func getNamesOfCities() -> [String] {
+        
+        do {
+            return try citiesDbQueue.read { db in
+                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities ORDER BY datetime(id) DESC")
+                
+                return row.map({ (row) -> String in
+                    return row["city"]
+                })
+            }
+        } catch {
+            
+            print(error)
+            return []
+        }
     }
     
     func getCityWeather() {
         
     }
     
-    func getNamesOfCities() -> [String] {
+    func deleteCity() {
         
-        return []
+        self.dropTable(with: "cities")
     }
-    
-    func deleteCity(with name : String) {
-        
-        datesDb.dropTable(with: name)
-        self.dropTable(with: name)
-    }
-}
-
-extension CitiesDatabase : TableProtocol {
     
     func createTable(with name : String) {
         do {
-            try database?.write { db in
+            try citiesDbQueue.write { db in
                 try db.execute(sql: """
-            CREATE TABLE \(name)) (
-                city TEXT NOT NULL,
-            )
-            """)
+            CREATE TABLE cities (
+                city TEXT NOT NULL)
+        """)
             }
         } catch {
+            
+            print(error)
             return
         }
     }

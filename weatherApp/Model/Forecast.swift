@@ -11,7 +11,7 @@ import SwiftyJSON
 
 class ForecastInfo : NSObject {
     
-    private var cityWeather : [String : [CityInfo]] = [:]
+    private var cityWeather : (city : String, info : [CityInfo])
     
     init(info : JSON) {
         
@@ -24,7 +24,8 @@ class ForecastInfo : NSObject {
         
         let cityName = info["city"]["name"].stringValue
         
-        cityWeather[cityName] = dailyForecast
+        cityWeather.city = cityName
+        cityWeather.info = dailyForecast
     }
     
     func addCity(with name : String) {
@@ -32,7 +33,7 @@ class ForecastInfo : NSObject {
         
     }
     
-    func getCityInfo() -> [String : [CityInfo]] {
+    func getCityInfo() -> (city : String, info : [CityInfo]) {
         
         return cityWeather
     }

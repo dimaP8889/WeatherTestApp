@@ -12,7 +12,7 @@ import SwiftyJSON
 class CityInfo : NSObject {
     
     private var date : String!
-    private var weather : UIImage!
+    private var weather : Int!
     private var temperature : String!
     
     init(info : JSON) {
@@ -23,7 +23,7 @@ class CityInfo : NSObject {
         
         self.date = date.convertTimeStampToDate()
         self.temperature = info["temp"]["day"].stringValue
-        self.weather = UIImage(named: setWeatherIcon(condition: info["weather"]["id"].intValue))
+        self.weather = info["weather"]["id"].intValue
     }
     
     private func setWeatherIcon(condition: Int) -> String {
@@ -74,7 +74,7 @@ class CityInfo : NSObject {
         return date
     }
     
-    func getCityWeather() -> UIImage {
+    func getCityWeather() -> Int {
         
         return weather
     }

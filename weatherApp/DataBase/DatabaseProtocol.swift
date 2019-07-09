@@ -9,22 +9,12 @@
 import Foundation
 import GRDB
 
-protocol TableProtocol {
-    
-    func dropTable(with name: String) // delete table
-    func createTable(with name: String) // create table
-    func checkTableExist(with name : String) -> Bool // check if table exist
-}
-
 class Database {
     
-    internal var path: String
+    internal var path = Bundle.main.path(forResource: "CitiesDatabase", ofType: "sqlite")!
     
-    var database : DatabasePool?
-    
-    init (with path : String) {
+    init() {
         
-        self.path = path
         initDatabase()
     }
     
@@ -34,34 +24,17 @@ class Database {
         config.readonly = false
         
         do {
-            database = try DatabasePool(path: path, configuration: config)
+            citiesDbQueue = try DatabaseQueue(path: path, configuration: config)
             
         } catch {
             return
         }
     }
     
-    internal func checkTableExist(with name : String) -> Bool {
-        
-        var exist = false
-        
-        do {
-            exist = try database?.read { db in
-                
-                try db.tableExists(name)
-                } ?? false
-        } catch {
-            
-            return false
-        }
-        
-        return exist
-    }
-    
     internal func dropTable(with name : String) {
         
         do {
-            try database?.write { db in
+            try citiesDbQueue.write { db in
                 try db.drop(table: name)
             }
         } catch {
