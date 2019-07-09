@@ -53,18 +53,19 @@ class ViewController: UIViewController {
     
     @IBAction func addCity(_ sender: Any) {
         
-        let alert = UIAlertController(title: "Add city", message: "Type city to add it", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add", style: .default) { (alertAction) in
+        let alert = UIAlertController(title: "Add city", message: "Type city to add it", preferredStyle: .alert) // create alert controller
+        let action = UIAlertAction(title: "Add", style: .default) { (alertAction) in // add action
             
-            let textField = alert.textFields![0] as UITextField
-            self.requestCityInfo(for: textField.text!) {
+            let textField = alert.textFields![0] as UITextField // text from textField
+            self.requestCityInfo(for: textField.text!) { // request city
                 self.citiesTableView.reloadData()
             }
         }
-        alert.addTextField { (textField) in
-            textField.placeholder = "Enter your name"
+        alert.addTextField { (textField) in // add placeholderß
+            textField.placeholder = "Enter city"
         }
-        alert.addAction(action)
+        
+        alert.addAction(action) // add action
         self.present(alert, animated: true, completion: nil)
     }
     
