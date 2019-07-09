@@ -13,13 +13,12 @@ class ViewController: UIViewController {
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/forecast/daily"
     let APP_ID = "e72ca729af228beabd5d20e3b7749713"
     
-    var cities : [ForecastInfo] = []
     let citiesDb = CitiesDatabase()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if !citiesDb.checkTableExist(with: "cities") {
+        if !citiesDb.checkTableExist() {
             
             citiesDb.createTable(with: "cities")
             requestCityInfo(for: "Kiev")
@@ -38,37 +37,29 @@ class ViewController: UIViewController {
     
     @IBAction func addCity(_ sender: Any) {
         
-        
+        requestCityInfo(for: "London")
     }
     
-    func requestCityInfo(for city : String) { // request city info from api
+    private func requestCityInfo(for city : String) { // request city info from api
         
         let params : [String : String] = ["q" : city, "appid" : APP_ID, "units" : "metric", "cnt" : "7"]
         
         Service.sharedInstances.getWeatherData(url: WEATHER_URL, parameters: params, completion: { (info) in
             
-            print(info.getCityInfo().city)
             self.citiesDb.addCity(info: info)
-            self.cities.append(info)
+            print(self.citiesDb.getNamesOfCities())
         }) { (error) in
             
             print(error as Any)
         }
     }
     
-    func updateCitiesInfo() {
+    private func updateCitiesInfo() {
         
-        let cities = citiesDb.getNamesOfCities(with: "cities")
-
-        print(cities)
-        citiesDb.dropTable(with: "cities")
-        citiesDb.createTable(with: "cities")
-        self.cities.removeAll()
+        let cities = citiesDb.getNamesOfCities() // get list of cities
         
-        cities.forEach { (city) in
-            
-            requestCityInfo(for: city)
-        }
+        cities.enumerated().forEach { citiesDb.deleteCity(with: $0.element) } // delete city info
+        cities.enumerated().forEach { requestCityInfo(for: $0.element) } // add city info
     }
 }
 

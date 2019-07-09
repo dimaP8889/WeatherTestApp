@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftyJSON
+import GRDB
 
 class CityInfo : NSObject {
     
@@ -24,6 +25,13 @@ class CityInfo : NSObject {
         self.date = date.convertTimeStampToDate()
         self.temperature = info["temp"]["day"].stringValue
         self.weather = info["weather"]["id"].intValue
+    }
+    
+    init(row : Row) {
+        
+        date = row["date"]
+        weather = row["weather"]
+        temperature = row["temperature"]
     }
     
     private func setWeatherIcon(condition: Int) -> String {

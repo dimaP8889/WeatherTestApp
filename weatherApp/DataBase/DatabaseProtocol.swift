@@ -27,6 +27,8 @@ class Database {
             citiesDbQueue = try DatabaseQueue(path: path, configuration: config)
             
         } catch {
+            
+            print(error)
             return
         }
     }
@@ -39,7 +41,10 @@ class Database {
             }
         } catch {
             
+            print(error)
             return
         }
     }
 }
+
+

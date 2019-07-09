@@ -16,16 +16,17 @@ class CitiesDatabase : Database {
     func addCity(info : ForecastInfo) {
 
         do {
+            
+            try forecastDb.createTable(with: info)
             try citiesDbQueue.write { db in
                 
                 try db.execute(sql: "INSERT INTO cities (city) VALUES (?)", arguments: ["\(info.getCityInfo().city)"])
-                forecastDb.createTable(with: info)
             }
         } catch {
+            
             print(error)
             return
         }
-        
     }
     
     internal func checkTableExist() -> Bool {
@@ -50,7 +51,7 @@ class CitiesDatabase : Database {
         
         do {
             return try citiesDbQueue.read { db in
-                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities ORDER BY datetime(id) DESC")
+                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities DESC")
                 
                 return row.map({ (row) -> String in
                     return row["city"]
@@ -63,22 +64,38 @@ class CitiesDatabase : Database {
         }
     }
     
-    func getCityWeather() {
+    func getCityWeather(for city : String) -> CityInfo? {
         
+        return forecastDb.getTodayWeather(for: city)
     }
     
-    func deleteCity() {
+    func getCityFullWeather(for city : String) -> CityInfo? {
         
-        self.dropTable(with: "cities")
+        return forecastDb.getTodayWeather(for: city)
+    }
+    
+    func deleteCity(with name : String) {
+        
+        forecastDb.dropTable(with: name)
+        
+        do {
+            try citiesDbQueue.write { db in
+                try db.execute(sql: "DELETE FROM cities WHERE city = ?", arguments: [name])
+            }
+        } catch {
+            
+            print(error)
+            return
+        }
     }
     
     func createTable(with name : String) {
         do {
             try citiesDbQueue.write { db in
                 try db.execute(sql: """
-            CREATE TABLE cities (
+                CREATE TABLE cities (
                 city TEXT NOT NULL)
-        """)
+                """)
             }
         } catch {
             

@@ -9,9 +9,9 @@
 import Foundation
 import GRDB
 
-class DatesDatabase {
+class DatesDatabase : Database {
     
-    func addInfo(with info : [CityInfo], and name : String) {
+    private func addInfo(with info : [CityInfo], and name : String) {
         
         for cityForecast in info {
             
@@ -25,10 +25,10 @@ class DatesDatabase {
             
             let date = info.getCityDate()
             let temperature = info.getCityTemperature()
-            let weather = info.getCityTemperature()
+            let weather = info.getCityWeather()
             
             try citiesDbQueue.write{ (db) in
-                try db.execute(sql: "INSERT into \(city) (date, temperature, weather)", arguments: [date, temperature, weather])
+                try db.execute(sql: "INSERT into \(city) (date, temperature, weather) VALUES (?, ?, ?)", arguments: [date, temperature, weather])
             }
             
         } catch {
@@ -38,18 +38,44 @@ class DatesDatabase {
         }
     }
     
-    func getTodayWeather() {
+    func getWholeWeather(for city : String) -> [CityInfo] {
         
+        do {
+            
+            return try citiesDbQueue.read { db in
+                let row = try Row.fetchAll(db, sql: "SELECT * FROM \(city) ORDER BY datetime(date) DESC")
+                
+                print(row)
+                return []
+            }
+            
+        } catch {
+            
+            print(error)
+            return []
+        }
     }
     
-    func getWeather() {
+    func getTodayWeather(for city : String) -> CityInfo? {
         
+        do {
+            
+            return try citiesDbQueue.read { db -> CityInfo? in
+                
+                let row = try Row.fetchOne(db, sql: "SELECT * FROM \(city) ORDER BY datetime(date) DESC LIMIT 1")
+                
+                guard row != nil else { return nil }
+                return CityInfo(row: row!)
+            }
+            
+        } catch {
+            
+            print(error)
+            return nil
+        }
     }
-}
-
-extension DatesDatabase {
     
-    func createTable(with info : ForecastInfo) {
+    func createTable(with info : ForecastInfo) throws {
         
         let name = info.getCityInfo().city
         
@@ -66,7 +92,7 @@ extension DatesDatabase {
             }
         } catch {
             print(error)
-            return
+            throw error
         }
         
         addInfo(with: info.getCityInfo().info, and : name)
