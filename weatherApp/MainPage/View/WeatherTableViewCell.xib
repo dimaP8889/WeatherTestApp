@@ -20,19 +20,19 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ose-ar-lF5" userLabel="Main View">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="50.5"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="60.5"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sunnyImg" translatesAutoresizingMaskIntoConstraints="NO" id="iBq-Dd-Sb3">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="50.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="60.5"/>
                             </imageView>
                             <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W4a-xI-vNY" userLabel="Degree View">
-                                <rect key="frame" x="250" y="0.0" width="70" height="50.5"/>
+                                <rect key="frame" x="250" y="0.0" width="70" height="60.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Kf-PD-5Gl" userLabel="Degree Label View">
-                                        <rect key="frame" x="10" y="12" width="50" height="26.5"/>
+                                        <rect key="frame" x="10" y="12" width="50" height="36.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2TF-kp-hEe" userLabel="Degree Label">
-                                                <rect key="frame" x="0.0" y="0.0" width="50" height="26.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="50" height="36.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -53,13 +53,13 @@
                                 </constraints>
                             </view>
                             <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jxB-WA-c4m" userLabel="City View">
-                                <rect key="frame" x="0.0" y="0.0" width="120" height="50.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="120" height="60.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uCB-Uo-ly7" userLabel="City Label View">
-                                        <rect key="frame" x="8" y="12" width="104" height="26.5"/>
+                                        <rect key="frame" x="8" y="12" width="104" height="36.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ESK-8k-ema" userLabel="City Label">
-                                                <rect key="frame" x="0.0" y="0.0" width="104" height="26.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="104" height="36.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -98,18 +98,11 @@
                             <constraint firstItem="iBq-Dd-Sb3" firstAttribute="top" secondItem="ose-ar-lF5" secondAttribute="top" id="xGj-au-gsR"/>
                         </constraints>
                     </view>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4j7-r2-bLW" userLabel="Bottom View">
-                        <rect key="frame" x="0.0" y="50.5" width="320" height="10"/>
-                    </view>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="4j7-r2-bLW" secondAttribute="bottom" id="473-rI-d3M"/>
-                    <constraint firstAttribute="trailing" secondItem="4j7-r2-bLW" secondAttribute="trailing" id="59g-1F-9Vz"/>
                     <constraint firstAttribute="trailing" secondItem="ose-ar-lF5" secondAttribute="trailing" id="El8-in-FOl"/>
                     <constraint firstItem="ose-ar-lF5" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="GC8-rB-5qd"/>
-                    <constraint firstItem="4j7-r2-bLW" firstAttribute="top" secondItem="ose-ar-lF5" secondAttribute="bottom" id="JGz-11-okl"/>
-                    <constraint firstItem="4j7-r2-bLW" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="QQJ-XS-NVx"/>
-                    <constraint firstAttribute="bottom" secondItem="ose-ar-lF5" secondAttribute="bottom" constant="10" id="id4-W9-ghi"/>
+                    <constraint firstAttribute="bottom" secondItem="ose-ar-lF5" secondAttribute="bottom" id="id4-W9-ghi"/>
                     <constraint firstItem="ose-ar-lF5" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="oHD-UN-I5u"/>
                 </constraints>
             </tableViewCellContentView>
@@ -120,7 +113,7 @@
                 <outlet property="degreeLabel" destination="2TF-kp-hEe" id="CeV-Rp-NYV"/>
                 <outlet property="mainView" destination="ose-ar-lF5" id="Esw-7c-SaM"/>
             </connections>
-            <point key="canvasLocation" x="47.826086956521742" y="40.513392857142854"/>
+            <point key="canvasLocation" x="93" y="47"/>
         </tableViewCell>
     </objects>
     <resources>

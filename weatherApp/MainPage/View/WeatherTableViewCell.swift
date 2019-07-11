@@ -12,7 +12,12 @@ class WeatherTableViewCell: UITableViewCell {
 
     @IBOutlet weak var backgroundImage: UIImageView!
     
-    @IBOutlet weak var mainView: UIView!
+    @IBOutlet weak var mainView: UIView! {
+        
+        didSet {
+            mainView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectCell)))
+        }
+    }
     
     @IBOutlet weak var degreeLabel: UILabel! {
         
@@ -33,18 +38,17 @@ class WeatherTableViewCell: UITableViewCell {
         }
     }
     
+    var didSelectCellAction : (()->())?
+    
+    @objc private func didSelectCell() {
+        
+        didSelectCellAction?()
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
         self.mainView.layer.cornerRadius = 8
         self.mainView.layer.masksToBounds = true
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    
+    }    
 }

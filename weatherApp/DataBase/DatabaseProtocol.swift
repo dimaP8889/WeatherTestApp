@@ -37,7 +37,7 @@ class Database {
         
         do {
             try citiesDbQueue.write { db in
-                try db.drop(table: name)
+                try db.drop(table: name.removeWhitespace())
             }
         } catch {
             

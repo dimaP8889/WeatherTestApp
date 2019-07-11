@@ -21,11 +21,13 @@ class CityInfo : NSObject {
         super.init()
         
         let date = info["dt"].doubleValue
+        let temperature = info["temp"]["day"].floatValue
         
+        self.temperature = String(format: "%.0f", temperature) + "°"
         self.date = date.convertTimeStampToDate()
-        self.temperature = info["temp"]["day"].stringValue
-        print(info["weather"])
         self.weather = info["weather"][0]["id"].intValue
+        
+    
     }
     
     init(row : Row) {

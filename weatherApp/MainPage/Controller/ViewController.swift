@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     let APP_ID = "e72ca729af228beabd5d20e3b7749713"
     
     let citiesDb = CitiesDatabase()
+    private var selectedCityInfo : ForecastInfo?
     
     @IBOutlet weak var citiesTableView: UITableView! {
         
@@ -33,53 +34,31 @@ class ViewController: UIViewController {
         if !citiesDb.checkTableExist() {
             
             citiesDb.createTable(with: "cities")
-            requestCityInfo(for: "Kiev", completion: nil)
-            requestCityInfo(for: "Lviv") {
-                
-                self.citiesTableView.reloadData()
+            requestCityInfo(for: "Kiev") {
+                self.requestCityInfo(for: "Lviv") {
+                    self.citiesTableView.reloadData()
+                }
             }
         } else {
-//            citiesDb.deleteCity(with: "London")
+//            citiesDb.deleteCity(with: "Kiev")
+//            citiesDb.deleteCity(with: "Lviv")
+//            citiesDb.deleteCity(with: "Kazan")
+//            citiesDb.deleteCity(with: "Texas")
+//            citiesDb.deleteCity(with: "Warsaw")
+//            citiesDb.deleteCity(with: "NewYork")
+//            citiesDb.deleteCity(with: "NewDelhi")
+//            citiesDb.deleteCity(with: "Amsterdam")
 //            citiesDb.dropTable(with: "cities")
+//            citiesDb.deleteCity(with: "Kyiv")
             updateCitiesInfo()
         }
         // Do any additional setup after loading the view.
     }
 
+    // MARK:- update info about cities
     @IBAction func resfreshInfo(_ sender: Any) {
         
         updateCitiesInfo()
-    }
-    
-    @IBAction func addCity(_ sender: Any) {
-        
-        let alert = UIAlertController(title: "Add city", message: "Type city to add it", preferredStyle: .alert) // create alert controller
-        let action = UIAlertAction(title: "Add", style: .default) { (alertAction) in // add action
-            
-            let textField = alert.textFields![0] as UITextField // text from textField
-            self.requestCityInfo(for: textField.text!) { // request city
-                self.citiesTableView.reloadData()
-            }
-        }
-        alert.addTextField { (textField) in // add placeholderß
-            textField.placeholder = "Enter city"
-        }
-        
-        alert.addAction(action) // add action
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    private func requestCityInfo(for city : String, completion : (() -> ())?) { // request city info from api
-        
-        let params : [String : String] = ["q" : city, "appid" : APP_ID, "units" : "metric", "cnt" : "7"]
-        
-        Service.sharedInstances.getWeatherData(url: WEATHER_URL, parameters: params, completion: { (info) in
-            
-            self.citiesDb.addCity(info: info)
-            completion?()
-        }) { (error) in
-            
-        }
     }
     
     private func updateCitiesInfo() {
@@ -102,11 +81,53 @@ class ViewController: UIViewController {
             self.citiesTableView.reloadData()
         }
     }
+    
+    // MARK:- add new city
+    @IBAction func addCity(_ sender: Any) {
+        
+        let alert = SearchAlert(vc: self) { (city) in
+            
+            self.requestCityInfo(for: city ?? "") { // request city
+                self.citiesTableView.reloadData()
+            }
+        }
+        
+        alert.presentAlert() // present Alert
+    }
+    
+    private func requestCityInfo(for city : String, completion : (() -> ())?) { // request city info from api
+        
+        let params : [String : String] = ["q" : city, "appid" : APP_ID, "units" : "metric", "cnt" : "7"]
+        
+        Service.sharedInstances.getWeatherData(url: WEATHER_URL, parameters: params, completion: { (info) in
+            
+            self.citiesDb.addCity(info: info)
+            completion?()
+        }) { (error) in
+            
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if let destVC = segue.destination as? CityViewController {
+            
+            guard let forecast = selectedCityInfo?.getCityInfo() else { return }
+            destVC.cityName = forecast.city
+            destVC.forecastInfo = forecast.info
+        }
+    }
 }
 
+// MARK:- add new city
 extension ViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         
         let cities = citiesDb.getNamesOfCities()
         return cities.count
@@ -117,9 +138,15 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherCell") as? WeatherTableViewCell {
             
             let cities = citiesDb.getNamesOfCities()
-            let cityWheather = citiesDb.getCityWeather(for: cities[indexPath.row]) // get city info
+            let cityWheather = citiesDb.getCityWeather(for: cities[indexPath.section]) // get city info
+            let cityName = cities[indexPath.section]
             
-            cell.cityLabel.text = cities[indexPath.row]
+            cell.didSelectCellAction = { [weak self] in
+                
+                self?.selectedCityInfo = self?.citiesDb.getCityFullWeather(for: cityName)
+                self?.performSegue(withIdentifier: "WeatherSegue", sender: self)
+            }
+            cell.cityLabel.text = cityName
             cell.degreeLabel.text = cityWheather?.getCityTemperature()
             cell.backgroundImage.image = UIImage(named: (cityWheather?.setWeatherImage())!)
             return cell
@@ -130,6 +157,37 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    // view for header
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        return view
+    }
+    
+    // make indent for cells
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        
+        return 10
+    }
+    
+    // add deleting on swipe
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+            
+            
+            let cities = citiesDb.getNamesOfCities()
+            
+            citiesDb.deleteCity(with: cities[indexPath.section])
+            citiesTableView.reloadData()
+        }
     }
     
 }

@@ -14,13 +14,15 @@ class CitiesDatabase : Database {
     private var forecastDb = DatesDatabase()
     
     func addCity(info : ForecastInfo) {
-
+        
+        let city = info.getCityInfo().city
+        
         do {
             
             try forecastDb.createTable(with: info)
             try citiesDbQueue.write { db in
                 
-                try db.execute(sql: "INSERT INTO cities (city) VALUES (?)", arguments: ["\(info.getCityInfo().city)"])
+                try db.execute(sql: "INSERT INTO cities (city) VALUES (?)", arguments: ["\(city)"])
             }
         } catch {
             
@@ -51,7 +53,7 @@ class CitiesDatabase : Database {
         
         do {
             return try citiesDbQueue.read { db in
-                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities ORDER BY city DESC")
+                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities ORDER BY city ASC")
                 
                 return row.map({ (row) -> String in
                     return row["city"]
@@ -69,9 +71,9 @@ class CitiesDatabase : Database {
         return forecastDb.getTodayWeather(for: city)
     }
     
-    func getCityFullWeather(for city : String) -> CityInfo? {
+    func getCityFullWeather(for city : String) -> ForecastInfo? {
         
-        return forecastDb.getTodayWeather(for: city)
+        return forecastDb.getWholeWeather(for: city)
     }
     
     func deleteCity(with name : String) {

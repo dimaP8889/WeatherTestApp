@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftyJSON
+import GRDB
 
 class ForecastInfo : NSObject {
     
@@ -28,27 +29,19 @@ class ForecastInfo : NSObject {
         cityWeather.info = dailyForecast
     }
     
-    func addCity(with name : String) {
+    init(city name : String, row : [Row]) {
         
-        
+        var cityForecast : [CityInfo] = []
+        for info in row {
+            
+            cityForecast.append(CityInfo(row: info))
+        }
+        cityWeather.city = name
+        cityWeather.info = cityForecast
     }
     
     func getCityInfo() -> (city : String, info : [CityInfo]) {
         
         return cityWeather
-    }
-}
-
-extension Double {
-    
-    func convertTimeStampToDate() -> String {
-        
-        let date = Date(timeIntervalSince1970: self)
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd-MM-yyyy" //Specify your format that you want
-        let strDate = dateFormatter.string(from: date)
-        
-        return strDate
     }
 }

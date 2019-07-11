@@ -28,7 +28,7 @@ class DatesDatabase : Database {
             let weather = info.getCityWeather()
             
             try citiesDbQueue.write{ (db) in
-                try db.execute(sql: "INSERT into \(city) (date, temperature, weather) VALUES (?, ?, ?)", arguments: [date, temperature, weather])
+                try db.execute(sql: "INSERT into \(city.removeWhitespace()) (date, temperature, weather) VALUES (?, ?, ?)", arguments: [date, temperature, weather])
             }
             
         } catch {
@@ -38,21 +38,21 @@ class DatesDatabase : Database {
         }
     }
     
-    func getWholeWeather(for city : String) -> [CityInfo] {
+    func getWholeWeather(for city : String) -> ForecastInfo? {
         
         do {
             
             return try citiesDbQueue.read { db in
-                let row = try Row.fetchAll(db, sql: "SELECT * FROM \(city) ORDER BY datetime(date) DESC")
-                
-                print(row)
-                return []
+                let row = try Row.fetchAll(db, sql: "SELECT * FROM \(city.removeWhitespace()) ORDER BY datetime(date) ASC")
+                let cityInfo = ForecastInfo(city: city, row: row)
+
+                return cityInfo
             }
             
         } catch {
             
             print(error)
-            return []
+            return nil
         }
     }
     
@@ -62,7 +62,7 @@ class DatesDatabase : Database {
             
             return try citiesDbQueue.read { db -> CityInfo? in
                 
-                let row = try Row.fetchOne(db, sql: "SELECT * FROM \(city) ORDER BY datetime(date) DESC LIMIT 1")
+                let row = try Row.fetchOne(db, sql: "SELECT * FROM \(city.removeWhitespace()) ORDER BY datetime(date) DESC LIMIT 1")
                 
                 guard row != nil else { return nil }
                 return CityInfo(row: row!)
@@ -77,7 +77,7 @@ class DatesDatabase : Database {
     
     func createTable(with info : ForecastInfo) throws {
         
-        let name = info.getCityInfo().city
+        let name = info.getCityInfo().city.removeWhitespace()
         
         do {
             
