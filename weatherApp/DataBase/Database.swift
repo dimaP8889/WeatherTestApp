@@ -14,8 +14,9 @@ class Database : NSObject {
     
     internal var path = Bundle.main.path(forResource: "CitiesDatabase", ofType: "sqlite")!
     
-    init() {
+    override init() {
         
+        super.init() 
         initDatabase()
     }
     
