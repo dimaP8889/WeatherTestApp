@@ -10,7 +10,12 @@ import Foundation
 import SwiftyJSON
 import GRDB
 
-class ForecastInfo : NSObject {
+protocol ForecastInfoProtocol {
+    
+    func getCityInfo() -> (city : String, info : [CityInfo]) // whole city info
+}
+
+class ForecastInfo : NSObject, ForecastInfoProtocol {
     
     private var cityWeather : (city : String, info : [CityInfo])
     

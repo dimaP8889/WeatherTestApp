@@ -62,11 +62,13 @@ class CityViewController: UIViewController {
         setCurrentDayWeather()
     }
     
+    // back button pressed
     @objc private func getBackToMainView() {
         
         self.navigationController?.popToRootViewController(animated: true)
     }
 
+    // set labels for current day
     private func setCurrentDayWeather() {
         
         guard let currentDayInfo = forecastInfo.first else { return }
@@ -78,6 +80,7 @@ class CityViewController: UIViewController {
     
 }
 
+// MARK: - TableView extension
 extension CityViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

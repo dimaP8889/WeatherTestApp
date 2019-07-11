@@ -10,7 +10,18 @@ import Foundation
 import SwiftyJSON
 import GRDB
 
-class CityInfo : NSObject {
+protocol CityInfoInterface {
+    
+    func setWeatherIcon() -> String // set little weather icons
+    func setWeatherImage() -> String // set background weather images
+    
+    func getCityDate() -> String
+    func getCityWeather() -> Int
+    func getCityTemperature() -> String
+    func getId() -> Int
+}
+
+class CityInfo : NSObject, CityInfoInterface {
     
     private var date : String!
     private var weather : Int!
@@ -39,6 +50,7 @@ class CityInfo : NSObject {
         id = row["id"]
     }
     
+    // MARK: - set images
     func setWeatherIcon() -> String {
     
         switch (weather!) {
@@ -125,6 +137,7 @@ class CityInfo : NSObject {
         
     }
     
+    // MARK: - Getters
     func getCityDate() -> String {
         
         return date

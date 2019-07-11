@@ -32,9 +32,11 @@ class ViewController: UIViewController {
         
         citiesTableView.register(UINib(nibName: "WeatherTableViewCell", bundle: nil), forCellReuseIdentifier: "WeatherCell")
         
-        if !citiesDb.checkTableExist() {
+        if !citiesDb.checkTableExist() { // check if table exist
             
             citiesDb.createTable(with: "cities")
+            
+            // add cities and reload tableview
             requestCityInfo(for: "Kiev") { (kievInfo) in
                 
                 self.citiesDb.addCity(info: kievInfo)
@@ -45,7 +47,7 @@ class ViewController: UIViewController {
                 }
             }
         } else {
-            updateCitiesInfo()
+            updateCitiesInfo() // update info for cities
         }
         // Do any additional setup after loading the view.
     }
@@ -140,7 +142,7 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
             let cityWheather = citiesDb.getCityWeather(for: cities[indexPath.section]) // get city info
             let cityName = cities[indexPath.section]
             
-            cell.didSelectCellAction = { [weak self] in
+            cell.didSelectCellAction = { [weak self] in // action for selecting cell
                 
                 self?.selectedCityInfo = self?.citiesDb.getCityFullWeather(for: cityName)
                 self?.performSegue(withIdentifier: "WeatherSegue", sender: self)

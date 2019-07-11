@@ -10,28 +10,27 @@ import Foundation
 import GRDB
 import SwiftyJSON
 
-class CitiesDatabase : Database {
+protocol CitiesDatabaseInterface {
+    
+    func createTable(with name : String) // create table
+    func checkTableExist() -> Bool // check if table exist
+    
+    func addCity(info : ForecastInfo) // add new city
+    func deleteCity(with name : String) // delete city from table
+    
+    func updateCityWeather(for city : String, with cityInfo : ForecastInfo) // update weather for city
+    
+    func getCityWeather(for city : String) -> CityInfo? // get city weather for one day
+    func getCityFullWeather(for city : String) -> ForecastInfo? // get city weather for a week
+    
+    func getNamesOfCities() -> [String] // get names of cities in table
+}
+
+class CitiesDatabase : Database, CitiesDatabaseInterface {
     
     private var forecastDb = DatesDatabase()
     
-    func addCity(info : ForecastInfo) {
-        
-        let city = info.getCityInfo().city
-        
-        do {
-            
-            try forecastDb.createTable(with: info)
-            try citiesDbQueue.write { db in
-                
-                try db.execute(sql: "INSERT INTO cities (city) VALUES (?)", arguments: ["\(city)"])
-            }
-        } catch {
-            
-            print(error)
-            return
-        }
-    }
-    
+    // MARK: - fetch table
     func checkTableExist() -> Bool {
         
         var exist = true
@@ -50,21 +49,6 @@ class CitiesDatabase : Database {
         return exist
     }
     
-    func deleteCity(with name : String) {
-        
-        forecastDb.dropTable(with: name)
-        
-        do {
-            try citiesDbQueue.write { db in
-                try db.execute(sql: "DELETE FROM cities WHERE city = ?", arguments: [name])
-            }
-        } catch {
-            
-            print(error)
-            return
-        }
-    }
-    
     func createTable(with name : String) {
         do {
             try citiesDbQueue.write { db in
@@ -80,11 +64,46 @@ class CitiesDatabase : Database {
         }
     }
     
+    // MARK: - Change city data
+    func addCity(info : ForecastInfo) {
+        
+        let city = info.getCityInfo().city
+        
+        do {
+            
+            try forecastDb.createTable(with: info)
+            try citiesDbQueue.write { db in
+                
+                try db.execute(sql: "INSERT INTO cities (city) VALUES (?)", arguments: ["\(city)"])
+            }
+        } catch {
+            
+            print(error)
+            return
+        }
+    }
+    
+    func deleteCity(with name : String) {
+        
+        forecastDb.dropTable(with: name)
+        
+        do {
+            try citiesDbQueue.write { db in
+                try db.execute(sql: "DELETE FROM cities WHERE city = ?", arguments: [name])
+            }
+        } catch {
+            
+            print(error)
+            return
+        }
+    }
+    
     func updateCityWeather(for city : String, with cityInfo : ForecastInfo) {
         
         forecastDb.updateCityInfo(with: cityInfo.getCityInfo().info, and: city)
     }
     
+    // MARK: - get cities name
     func getNamesOfCities() -> [String] {
         
         do {
@@ -102,6 +121,7 @@ class CitiesDatabase : Database {
         }
     }
     
+    // MARK: - get weather info
     func getCityWeather(for city : String) -> CityInfo? {
         
         return forecastDb.getTodayWeather(for: city)

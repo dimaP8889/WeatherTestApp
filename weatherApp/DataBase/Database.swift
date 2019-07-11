@@ -9,7 +9,8 @@
 import Foundation
 import GRDB
 
-class Database {
+
+class Database : NSObject {
     
     internal var path = Bundle.main.path(forResource: "CitiesDatabase", ofType: "sqlite")!
     
