@@ -1,8 +1,7 @@
-> WeatherApp
+ > WeatherApp
 
 App for weather forecast
 
 to start using it clone repository:
-```bash
+
 git clone https://github.com/dimaP8889/WeatherTestApp.git
-```
