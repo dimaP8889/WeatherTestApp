@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
+      "filename" : "lightrain.jpeg",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "lightrain.jpeg",
       "scale" : "2x"
     },
     {

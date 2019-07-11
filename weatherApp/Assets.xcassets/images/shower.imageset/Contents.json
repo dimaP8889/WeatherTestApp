@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
+      "filename" : "shower.jpeg",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "shower.jpeg",
       "scale" : "2x"
     },
     {

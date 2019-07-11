@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
+      "filename" : "clouds.jpg",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "photo-1528485238486-507af7c0aa19.jpeg",
       "scale" : "2x"
     },
     {
