@@ -8,6 +8,7 @@
 
 import Foundation
 import GRDB
+import SwiftyJSON
 
 class CitiesDatabase : Database {
     
@@ -31,7 +32,7 @@ class CitiesDatabase : Database {
         }
     }
     
-    internal func checkTableExist() -> Bool {
+    func checkTableExist() -> Bool {
         
         var exist = true
         
@@ -47,33 +48,6 @@ class CitiesDatabase : Database {
         }
         
         return exist
-    }
-    
-    func getNamesOfCities() -> [String] {
-        
-        do {
-            return try citiesDbQueue.read { db in
-                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities ORDER BY city ASC")
-                
-                return row.map({ (row) -> String in
-                    return row["city"]
-                })
-            }
-        } catch {
-            
-            print(error)
-            return []
-        }
-    }
-    
-    func getCityWeather(for city : String) -> CityInfo? {
-        
-        return forecastDb.getTodayWeather(for: city)
-    }
-    
-    func getCityFullWeather(for city : String) -> ForecastInfo? {
-        
-        return forecastDb.getWholeWeather(for: city)
     }
     
     func deleteCity(with name : String) {
@@ -104,5 +78,37 @@ class CitiesDatabase : Database {
             print(error)
             return
         }
+    }
+    
+    func updateCityWeather(for city : String, with cityInfo : ForecastInfo) {
+        
+        forecastDb.updateCityInfo(with: cityInfo.getCityInfo().info, and: city)
+    }
+    
+    func getNamesOfCities() -> [String] {
+        
+        do {
+            return try citiesDbQueue.read { db in
+                let row = try Row.fetchAll(db, sql: "SELECT * FROM cities ORDER BY city ASC")
+                
+                return row.map({ (row) -> String in
+                    return row["city"]
+                })
+            }
+        } catch {
+            
+            print(error)
+            return []
+        }
+    }
+    
+    func getCityWeather(for city : String) -> CityInfo? {
+        
+        return forecastDb.getTodayWeather(for: city)
+    }
+    
+    func getCityFullWeather(for city : String) -> ForecastInfo? {
+        
+        return forecastDb.getWholeWeather(for: city)
     }
 }

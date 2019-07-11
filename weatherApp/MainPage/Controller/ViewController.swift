@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class ViewController: UIViewController {
     
@@ -34,22 +35,16 @@ class ViewController: UIViewController {
         if !citiesDb.checkTableExist() {
             
             citiesDb.createTable(with: "cities")
-            requestCityInfo(for: "Kiev") {
-                self.requestCityInfo(for: "Lviv") {
+            requestCityInfo(for: "Kiev") { (kievInfo) in
+                
+                self.citiesDb.addCity(info: kievInfo)
+                self.requestCityInfo(for: "Lviv") { (lvivInfo) in
+                    
+                    self.citiesDb.addCity(info: lvivInfo)
                     self.citiesTableView.reloadData()
                 }
             }
         } else {
-//            citiesDb.deleteCity(with: "Kiev")
-//            citiesDb.deleteCity(with: "Lviv")
-//            citiesDb.deleteCity(with: "Kazan")
-//            citiesDb.deleteCity(with: "Texas")
-//            citiesDb.deleteCity(with: "Warsaw")
-//            citiesDb.deleteCity(with: "NewYork")
-//            citiesDb.deleteCity(with: "NewDelhi")
-//            citiesDb.deleteCity(with: "Amsterdam")
-//            citiesDb.dropTable(with: "cities")
-//            citiesDb.deleteCity(with: "Kyiv")
             updateCitiesInfo()
         }
         // Do any additional setup after loading the view.
@@ -66,18 +61,19 @@ class ViewController: UIViewController {
         let cities = citiesDb.getNamesOfCities() // get list of cities
         let myGroup = DispatchGroup()
         
-        cities.enumerated().forEach { citiesDb.deleteCity(with: $0.element) } // delete city info
-        
-        for city in cities { // add city info
+        cities.enumerated().forEach { // for each city update info
+            
+            let city = $0.element
             
             myGroup.enter()
-            requestCityInfo(for: city) {
+            requestCityInfo(for: city) { (forecast) in
+                self.citiesDb.updateCityWeather(for: city, with: forecast)
                 myGroup.leave()
             }
         }
         
         myGroup.notify(queue: DispatchQueue.main) { // reload table
-            
+
             self.citiesTableView.reloadData()
         }
     }
@@ -87,7 +83,9 @@ class ViewController: UIViewController {
         
         let alert = SearchAlert(vc: self) { (city) in
             
-            self.requestCityInfo(for: city ?? "") { // request city
+            self.requestCityInfo(for: city ?? "") { (cityInfo) in
+                
+                self.citiesDb.addCity(info: cityInfo)
                 self.citiesTableView.reloadData()
             }
         }
@@ -95,16 +93,17 @@ class ViewController: UIViewController {
         alert.presentAlert() // present Alert
     }
     
-    private func requestCityInfo(for city : String, completion : (() -> ())?) { // request city info from api
+    private func requestCityInfo(for city : String, completion : ((ForecastInfo) -> ())?) { // request city info from api
         
         let params : [String : String] = ["q" : city, "appid" : APP_ID, "units" : "metric", "cnt" : "7"]
         
         Service.sharedInstances.getWeatherData(url: WEATHER_URL, parameters: params, completion: { (info) in
             
-            self.citiesDb.addCity(info: info)
-            completion?()
+            completion?(info)
         }) { (error) in
             
+            print(error as Any)
+            return
         }
     }
     
@@ -146,6 +145,7 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
                 self?.selectedCityInfo = self?.citiesDb.getCityFullWeather(for: cityName)
                 self?.performSegue(withIdentifier: "WeatherSegue", sender: self)
             }
+            
             cell.cityLabel.text = cityName
             cell.degreeLabel.text = cityWheather?.getCityTemperature()
             cell.backgroundImage.image = UIImage(named: (cityWheather?.setWeatherImage())!)

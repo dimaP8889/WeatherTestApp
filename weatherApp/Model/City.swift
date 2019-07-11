@@ -15,8 +15,9 @@ class CityInfo : NSObject {
     private var date : String!
     private var weather : Int!
     private var temperature : String!
+    private var id : Int!
     
-    init(info : JSON) {
+    init(info : JSON, id : Int) {
         
         super.init()
         
@@ -26,7 +27,7 @@ class CityInfo : NSObject {
         self.temperature = String(format: "%.0f", temperature) + "°"
         self.date = date.convertTimeStampToDate()
         self.weather = info["weather"][0]["id"].intValue
-        
+        self.id = id
     
     }
     
@@ -35,6 +36,7 @@ class CityInfo : NSObject {
         date = row["date"]
         weather = row["weather"]
         temperature = row["temperature"]
+        id = row["id"]
     }
     
     func setWeatherIcon() -> String {
@@ -136,5 +138,10 @@ class CityInfo : NSObject {
     func getCityTemperature() -> String {
         
         return temperature
+    }
+    
+    func getId() -> Int {
+        
+        return id
     }
 }

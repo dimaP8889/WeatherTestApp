@@ -18,9 +18,9 @@ class ForecastInfo : NSObject {
         
         var dailyForecast : [CityInfo] = []
         
-        for (_, dayForecast) in info["list"] {
+        for (id, dayForecast) in info["list"] {
             
-            dailyForecast.append(CityInfo(info: dayForecast))
+            dailyForecast.append(CityInfo(info: dayForecast, id: Int(id)!))
         }
         
         let cityName = info["city"]["name"].stringValue

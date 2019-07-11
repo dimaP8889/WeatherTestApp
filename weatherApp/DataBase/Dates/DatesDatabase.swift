@@ -26,9 +26,10 @@ class DatesDatabase : Database {
             let date = info.getCityDate()
             let temperature = info.getCityTemperature()
             let weather = info.getCityWeather()
+            let id = info.getId()
             
             try citiesDbQueue.write{ (db) in
-                try db.execute(sql: "INSERT into \(city.removeWhitespace()) (date, temperature, weather) VALUES (?, ?, ?)", arguments: [date, temperature, weather])
+                try db.execute(sql: "INSERT into \(city.removeWhitespace()) (date, temperature, weather, id) VALUES (?, ?, ?, ?)", arguments: [date, temperature, weather, id])
             }
             
         } catch {
@@ -75,6 +76,32 @@ class DatesDatabase : Database {
         }
     }
     
+    func updateCityInfo(with info : [CityInfo], and name : String) {
+        
+        for oneCityInfo in info {
+            
+            updateOneDay(with: oneCityInfo, and: name)
+        }
+    }
+    
+    private func updateOneDay(with info : CityInfo, and name : String) {
+        
+        let date = info.getCityDate()
+        let temperature = info.getCityTemperature()
+        let weather = info.getCityWeather()
+        let id = info.getId()
+        
+        do {
+            try citiesDbQueue.write { db in
+                try db.execute(sql: "UPDATE \(name.removeWhitespace()) SET date = ?, temperature = ?, weather = ?  WHERE id = ?", arguments: [date, temperature, weather, id])
+            }
+        } catch {
+            
+            print(error)
+            return
+        }
+    }
+    
     func createTable(with info : ForecastInfo) throws {
         
         let name = info.getCityInfo().city.removeWhitespace()
@@ -86,7 +113,8 @@ class DatesDatabase : Database {
                 CREATE TABLE \(name) (
                     date TEXT NOT NULL,
                     temperature TEXT NOT NULL,
-                    weather INT NOT NULL
+                    weather INT NOT NULL,
+                    id INT NOT NULL
                 )
                 """)
             }
