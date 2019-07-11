@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     
     let citiesDb = CitiesDatabase()
     private var selectedCityInfo : ForecastInfo?
+    private let refreshControl = UIRefreshControl()
     
     @IBOutlet weak var citiesTableView: UITableView! {
         
@@ -31,6 +32,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         citiesTableView.register(UINib(nibName: "WeatherTableViewCell", bundle: nil), forCellReuseIdentifier: "WeatherCell")
+        citiesTableView.refreshControl = refreshControl
+        
+        refreshControl.addTarget(self, action: #selector(resfreshInfo(_:)), for: .valueChanged)
         
         if !citiesDb.checkTableExist() { // check if table exist
             
@@ -51,9 +55,14 @@ class ViewController: UIViewController {
         }
         // Do any additional setup after loading the view.
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        self.refreshControl.endRefreshing() // end refreshing
+    }
 
     // MARK:- update info about cities
-    @IBAction func resfreshInfo(_ sender: Any) {
+    @objc private func resfreshInfo(_ sender: Any) {
         
         updateCitiesInfo()
     }
@@ -76,6 +85,7 @@ class ViewController: UIViewController {
         
         myGroup.notify(queue: DispatchQueue.main) { // reload table
 
+            self.refreshControl.endRefreshing() // end refreshing when data loaded
             self.citiesTableView.reloadData()
         }
     }
@@ -171,6 +181,10 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
         let view = UIView()
         view.backgroundColor = UIColor.white
         return view
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
     }
     
     // make indent for cells

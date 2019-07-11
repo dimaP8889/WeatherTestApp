@@ -41,33 +41,11 @@
                                             <constraint firstAttribute="width" constant="30" id="qrJ-4t-SYS"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nKb-By-yPL" userLabel="Refresh View">
-                                        <rect key="frame" x="30" y="71.5" width="25" height="25"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z0j-cm-Cgt" userLabel="Refresh Button">
-                                                <rect key="frame" x="0.0" y="0.0" width="25" height="25"/>
-                                                <state key="normal" image="refresh"/>
-                                                <connections>
-                                                    <action selector="resfreshInfo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fml-YU-xVd"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstItem="Z0j-cm-Cgt" firstAttribute="top" secondItem="nKb-By-yPL" secondAttribute="top" id="9fD-TV-tew"/>
-                                            <constraint firstAttribute="width" constant="25" id="EYv-Cb-Jqg"/>
-                                            <constraint firstAttribute="bottom" secondItem="Z0j-cm-Cgt" secondAttribute="bottom" id="Evw-QI-1oW"/>
-                                            <constraint firstAttribute="height" constant="25" id="Zxs-de-rfq"/>
-                                            <constraint firstAttribute="trailing" secondItem="Z0j-cm-Cgt" secondAttribute="trailing" id="dSo-5U-wDo"/>
-                                            <constraint firstItem="Z0j-cm-Cgt" firstAttribute="leading" secondItem="nKb-By-yPL" secondAttribute="leading" id="jx2-JO-hRw"/>
-                                        </constraints>
-                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="Bni-Kc-pnc" firstAttribute="centerY" secondItem="nKb-By-yPL" secondAttribute="centerY" id="Cz3-1N-vFL"/>
                                     <constraint firstAttribute="trailing" secondItem="Bni-Kc-pnc" secondAttribute="trailing" constant="30" id="aLw-ys-J1g"/>
-                                    <constraint firstAttribute="bottom" secondItem="nKb-By-yPL" secondAttribute="bottom" constant="20" id="aRQ-hh-VZC"/>
-                                    <constraint firstItem="nKb-By-yPL" firstAttribute="leading" secondItem="o99-Xf-GgG" secondAttribute="leading" constant="30" id="pug-eh-mLj"/>
+                                    <constraint firstAttribute="bottom" secondItem="Bni-Kc-pnc" secondAttribute="bottom" constant="17.5" id="tiB-F8-t8B"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="nd2-TK-dzT" userLabel="Cities Table View">
@@ -126,6 +104,5 @@
     </scenes>
     <resources>
         <image name="add" width="256" height="256"/>
-        <image name="refresh" width="256" height="256"/>
     </resources>
 </document>
